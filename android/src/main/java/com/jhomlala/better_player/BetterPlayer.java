@@ -306,7 +306,7 @@ final class BetterPlayer {
         float bracketedValue = (float) value;
         PlaybackParameters existingParam = exoPlayer.getPlaybackParameters();
         PlaybackParameters newParameter =
-                new PlaybackParameters(bracketedValue, existingParam.pitch, existingParam.skipSilence);
+                new PlaybackParameters(bracketedValue, existingParam.pitch);
         exoPlayer.setPlaybackParameters(newParameter);
     }
 
