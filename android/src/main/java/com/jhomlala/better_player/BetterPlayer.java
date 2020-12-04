@@ -26,7 +26,11 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.upstream.DefaultAllocator;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
@@ -79,7 +83,21 @@ final class BetterPlayer {
         this.textureEntry = textureEntry;
 
         trackSelector = new DefaultTrackSelector();
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
+       
+        //Adding this code for SPLASH
+        LoadControl loadControl = new DefaultLoadControl.Builder()
+        .setAllocator(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE))
+        .setBufferDurationsMs(
+            30 * 1000, 
+            45 * 1000,
+            2 * 1000,
+            2 * 1000
+        )
+        .setTargetBufferBytes(DefaultLoadControl.DEFAULT_TARGET_BUFFER_BYTES)
+        .setPrioritizeTimeOverSizeThresholds(DefaultLoadControl.DEFAULT_PRIORITIZE_TIME_OVER_SIZE_THRESHOLDS)
+        .createDefaultLoadControl();
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl);
+        //End --- Adding this code for SPLASH
 
         setupVideoPlayer(eventChannel, textureEntry, result);
     }
@@ -200,6 +218,16 @@ final class BetterPlayer {
 
         exoPlayer.addListener(
                 new EventListener() {
+                    
+                    //Adding this code for SPLASH
+                    public void onIsLoadingChanged​(boolean bool){
+                        if (isInitialized && bool == false) {
+                        Map<String, Object> event = new HashMap<>();
+                        event.put("event", "precacheEnd");
+                        eventSink.success(event);
+                        }
+                    }
+                    //End --- adding this code for SPLASH
 
                     @Override
                     public void onPlayerStateChanged(final boolean playWhenReady, final int playbackState) {
