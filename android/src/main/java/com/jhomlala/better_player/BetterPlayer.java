@@ -42,14 +42,11 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-<<<<<<< HEAD
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.LoadControl;
-=======
->>>>>>> fd4b63eb882b47365e1b59e899715996ed71345c
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
@@ -110,7 +107,7 @@ final class BetterPlayer {
         this.eventChannel = eventChannel;
         this.textureEntry = textureEntry;
 
-        trackSelector = new DefaultTrackSelector();
+        trackSelector = new DefaultTrackSelector(context);
        
         //Adding this code for SPLASH
         LoadControl loadControl = new DefaultLoadControl.Builder()
