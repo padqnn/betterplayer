@@ -1,23 +1,27 @@
+// Dart imports:
 import 'dart:async';
 
+// Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+// Package imports:
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wakelock/wakelock.dart';
 
 import 'better_player_controller_provider.dart';
 
-typedef Widget BetterPlayerRoutePageBuilder(
+typedef BetterPlayerRoutePageBuilder = Widget Function(
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     BetterPlayerControllerProvider controllerProvider);
 
 class BetterPlayer extends StatefulWidget {
-  BetterPlayer({Key key, this.controller})
+  const BetterPlayer({Key key, @required this.controller})
       : assert(
             controller != null, 'You must provide a better player controller'),
         super(key: key);
@@ -28,9 +32,9 @@ class BetterPlayer extends StatefulWidget {
   }) =>
       BetterPlayer(
         controller: BetterPlayerController(
-          betterPlayerConfiguration ?? BetterPlayerConfiguration(),
+          betterPlayerConfiguration ?? const BetterPlayerConfiguration(),
           betterPlayerDataSource:
-              BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK, url),
+              BetterPlayerDataSource(BetterPlayerDataSourceType.network, url),
         ),
       );
 
@@ -40,9 +44,9 @@ class BetterPlayer extends StatefulWidget {
   }) =>
       BetterPlayer(
         controller: BetterPlayerController(
-          betterPlayerConfiguration ?? BetterPlayerConfiguration(),
+          betterPlayerConfiguration ?? const BetterPlayerConfiguration(),
           betterPlayerDataSource:
-              BetterPlayerDataSource(BetterPlayerDataSourceType.FILE, url),
+              BetterPlayerDataSource(BetterPlayerDataSourceType.file, url),
         ),
       );
 
@@ -70,11 +74,11 @@ class BetterPlayerState extends State<BetterPlayer>
     });
   }
 
-  void _setup() async {
+  Future<void> _setup() async {
     widget.controller.addListener(onFullScreenChanged);
-    var locale = Locale("en", "US");
+    var locale = const Locale("en", "US");
     if (mounted) {
-      var contextLocale = Localizations.localeOf(context);
+      final contextLocale = Localizations.localeOf(context);
       if (contextLocale != null) {
         locale = contextLocale;
       }
@@ -103,8 +107,9 @@ class BetterPlayerState extends State<BetterPlayer>
     super.didUpdateWidget(oldWidget);
   }
 
-  void onFullScreenChanged() async {
-    var controller = widget.controller;
+  // ignore: avoid_void_async
+  Future<void> onFullScreenChanged() async {
+    final controller = widget.controller;
     if (controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
       await _pushFullScreenWidget(context);
@@ -158,10 +163,10 @@ class BetterPlayerState extends State<BetterPlayer>
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    var controllerProvider = BetterPlayerControllerProvider(
+    final controllerProvider = BetterPlayerControllerProvider(
         controller: widget.controller, child: _buildPlayer());
 
-    var routePageBuilder = _betterPlayerConfiguration.routePageBuilder;
+    final routePageBuilder = _betterPlayerConfiguration.routePageBuilder;
     if (routePageBuilder == null) {
       return _defaultRoutePageBuilder(
           context, animation, secondaryAnimation, controllerProvider);
@@ -173,18 +178,17 @@ class BetterPlayerState extends State<BetterPlayer>
 
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
-    final TransitionRoute<Null> route = PageRouteBuilder<Null>(
-      settings: RouteSettings(),
+    final TransitionRoute<void> route = PageRouteBuilder<void>(
+      settings: const RouteSettings(),
       pageBuilder: _fullScreenRoutePageBuilder,
-      opaque: true,
     );
 
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    await SystemChrome.setEnabledSystemUIOverlays([]);
 
     if (isAndroid) {
       if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
           true) {
-        var aspectRatio =
+        final aspectRatio =
             widget?.controller?.videoPlayerController?.value?.aspectRatio ??
                 1.0;
         List<DeviceOrientation> deviceOrientations;
@@ -199,16 +203,21 @@ class BetterPlayerState extends State<BetterPlayer>
             DeviceOrientation.landscapeRight
           ];
         }
-        SystemChrome.setPreferredOrientations(deviceOrientations);
+        await SystemChrome.setPreferredOrientations(deviceOrientations);
       } else {
-        SystemChrome.setPreferredOrientations(
+        await SystemChrome.setPreferredOrientations(
           widget.controller.betterPlayerConfiguration
               .deviceOrientationsOnFullScreen,
         );
       }
+    } else {
+      await SystemChrome.setPreferredOrientations(
+        widget.controller.betterPlayerConfiguration
+            .deviceOrientationsOnFullScreen,
+      );
     }
 
-    if (!widget.controller.allowedScreenSleep) {
+    if (!_betterPlayerConfiguration.allowedScreenSleep) {
       Wakelock.enable();
     }
 
@@ -220,10 +229,10 @@ class BetterPlayerState extends State<BetterPlayer>
     // so we do not need to check Wakelock.isEnabled.
     Wakelock.disable();
 
-    SystemChrome.setEnabledSystemUIOverlays(
-        widget.controller.systemOverlaysAfterFullScreen);
-    SystemChrome.setPreferredOrientations(
-        widget.controller.deviceOrientationsAfterFullScreen);
+    await SystemChrome.setEnabledSystemUIOverlays(
+        _betterPlayerConfiguration.systemOverlaysAfterFullScreen);
+    await SystemChrome.setPreferredOrientations(
+        _betterPlayerConfiguration.deviceOrientationsAfterFullScreen);
   }
 
   Widget _buildPlayer() {

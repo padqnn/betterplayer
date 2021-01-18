@@ -1,5 +1,10 @@
+// Dart imports:
 import 'dart:ui';
 
+// Flutter imports:
+import 'package:better_player/better_player.dart';
+
+// Project imports:
 import 'package:better_player/src/controls/better_player_overflow_menu_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -71,8 +76,12 @@ class BetterPlayerControlsConfiguration {
   ///Time to hide controls
   final Duration controlsHideTime;
 
-  ///Custom controls, it will override Material/Cupertino controls
-  final Widget customControls;
+  ///Parameter used to build custom controls
+  final Widget Function(BetterPlayerController controller)
+      customControlsBuilder;
+
+  ///Parameter used to change theme of the player
+  final BetterPlayerTheme playerTheme;
 
   ///Flag used to show/hide controls
   final bool showControls;
@@ -99,11 +108,17 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to show/hide qualities
   final bool enableQualities;
 
+  ///Flag used to show/hide PiP mode
+  final bool enablePip;
+
   ///Custom items of overflow menu
   final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 
   ///Icon of the overflow menu
   final IconData overflowMenuIcon;
+
+  ///Icon of the PiP menu
+  final IconData pipMenuIcon;
 
   ///Icon of the playback speed menu item from overflow menu
   final IconData playbackSpeedIcon;
@@ -117,51 +132,67 @@ class BetterPlayerControlsConfiguration {
   ///Color of overflow menu icons
   final Color overflowMenuIconsColor;
 
-  ///Time which will be used once user uses rewind and forward
-  final int skipsTimeInMilliseconds;
+  ///Time which will be used once user uses forward
+  final int forwardSkipTimeInMilliseconds;
 
-  const BetterPlayerControlsConfiguration(
-      {this.controlBarColor = Colors.black87,
-      this.textColor = Colors.white,
-      this.iconsColor = Colors.white,
-      this.playIcon = Icons.play_arrow,
-      this.pauseIcon = Icons.pause,
-      this.muteIcon = Icons.volume_up,
-      this.unMuteIcon = Icons.volume_mute,
-      this.fullscreenEnableIcon = Icons.fullscreen,
-      this.fullscreenDisableIcon = Icons.fullscreen_exit,
-      this.skipBackIcon = Icons.fast_rewind,
-      this.skipForwardIcon = Icons.fast_forward,
-      this.enableFullscreen = true,
-      this.enableMute = true,
-      this.enableProgressText = false,
-      this.enableProgressBar = true,
-      this.enablePlayPause = true,
-      this.enableSkips = true,
-      this.progressBarPlayedColor = Colors.white,
-      this.progressBarHandleColor = Colors.white,
-      this.progressBarBufferedColor = Colors.white70,
-      this.progressBarBackgroundColor = Colors.white60,
-      this.controlsHideTime = const Duration(milliseconds: 300),
-      this.customControls,
-      this.showControls = true,
-      this.showControlsOnInitialize = true,
-      this.controlBarHeight = 48.0,
-      this.liveTextColor = Colors.red,
-      this.enableOverflowMenu = true,
-      this.enablePlaybackSpeed = true,
-      this.enableSubtitles = true,
-      this.enableQualities = true,
-      this.overflowMenuCustomItems = const [],
-      this.overflowMenuIcon = Icons.more_vert,
-      this.playbackSpeedIcon = Icons.shutter_speed,
-      this.qualitiesIcon = Icons.hd,
-      this.subtitlesIcon = Icons.text_fields,
-      this.overflowMenuIconsColor = Colors.black,
-      this.skipsTimeInMilliseconds = 15000});
+  ///Time which will be used once user uses backward
+  final int backwardSkipTimeInMilliseconds;
+
+  ///Color of default loading indicator
+  final Color loadingColor;
+
+  ///Widget which can be used instead of default progress
+  final Widget loadingWidget;
+
+  const BetterPlayerControlsConfiguration({
+    this.controlBarColor = Colors.black87,
+    this.textColor = Colors.white,
+    this.iconsColor = Colors.white,
+    this.playIcon = Icons.play_arrow,
+    this.pauseIcon = Icons.pause,
+    this.muteIcon = Icons.volume_up,
+    this.unMuteIcon = Icons.volume_mute,
+    this.fullscreenEnableIcon = Icons.fullscreen,
+    this.fullscreenDisableIcon = Icons.fullscreen_exit,
+    this.skipBackIcon = Icons.fast_rewind,
+    this.skipForwardIcon = Icons.fast_forward,
+    this.enableFullscreen = true,
+    this.enableMute = true,
+    this.enableProgressText = false,
+    this.enableProgressBar = true,
+    this.enablePlayPause = true,
+    this.enableSkips = true,
+    this.progressBarPlayedColor = Colors.white,
+    this.progressBarHandleColor = Colors.white,
+    this.progressBarBufferedColor = Colors.white70,
+    this.progressBarBackgroundColor = Colors.white60,
+    this.controlsHideTime = const Duration(milliseconds: 300),
+    this.customControlsBuilder,
+    this.playerTheme,
+    this.showControls = true,
+    this.showControlsOnInitialize = true,
+    this.controlBarHeight = 48.0,
+    this.liveTextColor = Colors.red,
+    this.enableOverflowMenu = true,
+    this.enablePlaybackSpeed = true,
+    this.enableSubtitles = true,
+    this.enableQualities = true,
+    this.enablePip = true,
+    this.overflowMenuCustomItems = const [],
+    this.overflowMenuIcon = Icons.more_vert,
+    this.pipMenuIcon = Icons.picture_in_picture,
+    this.playbackSpeedIcon = Icons.shutter_speed,
+    this.qualitiesIcon = Icons.hd,
+    this.subtitlesIcon = Icons.text_fields,
+    this.overflowMenuIconsColor = Colors.black,
+    this.forwardSkipTimeInMilliseconds = 15000,
+    this.backwardSkipTimeInMilliseconds = 15000,
+    this.loadingColor = Colors.black,
+    this.loadingWidget,
+  });
 
   factory BetterPlayerControlsConfiguration.white() {
-    return BetterPlayerControlsConfiguration(
+    return const BetterPlayerControlsConfiguration(
         controlBarColor: Colors.white,
         textColor: Colors.black,
         iconsColor: Colors.black,
@@ -172,7 +203,7 @@ class BetterPlayerControlsConfiguration {
   }
 
   factory BetterPlayerControlsConfiguration.cupertino() {
-    return BetterPlayerControlsConfiguration(
+    return const BetterPlayerControlsConfiguration(
         fullscreenEnableIcon: CupertinoIcons.fullscreen,
         fullscreenDisableIcon: CupertinoIcons.fullscreen_exit,
         playIcon: CupertinoIcons.play_arrow_solid,

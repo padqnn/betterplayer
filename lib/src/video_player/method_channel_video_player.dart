@@ -3,12 +3,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Dart imports:
 import 'dart:async';
 import 'dart:ui';
 
+// Flutter imports:
+import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+// Project imports:
 import 'video_player_platform_interface.dart';
 
 const MethodChannel _channel = MethodChannel('better_player_channel');
@@ -32,13 +36,12 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   Future<int> create() async {
     final Map<String, dynamic> response =
         await _channel.invokeMapMethod<String, dynamic>('create');
-    return response['textureId'];
+    return response['textureId'] as int;
   }
 
   @override
   Future<void> setDataSource(int textureId, DataSource dataSource) async {
     Map<String, dynamic> dataSourceDescription;
-
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
         dataSourceDescription = <String, dynamic>{
@@ -47,7 +50,13 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'package': dataSource.package,
           'useCache': false,
           'maxCacheSize': 0,
-          'maxCacheFileSize': 0
+          'maxCacheFileSize': 0,
+          'showNotification': dataSource.showNotification,
+          'title': dataSource.title,
+          'author': dataSource.author,
+          'imageUrl': dataSource.imageUrl,
+          'notificationChannelName': dataSource.notificationChannelName,
+          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
         };
         break;
       case DataSourceType.network:
@@ -58,7 +67,13 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'headers': dataSource.headers,
           'useCache': dataSource.useCache,
           'maxCacheSize': dataSource.maxCacheSize,
-          'maxCacheFileSize': dataSource.maxCacheFileSize
+          'maxCacheFileSize': dataSource.maxCacheFileSize,
+          'showNotification': dataSource.showNotification,
+          'title': dataSource.title,
+          'author': dataSource.author,
+          'imageUrl': dataSource.imageUrl,
+          'notificationChannelName': dataSource.notificationChannelName,
+          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
         };
         break;
       case DataSourceType.file:
@@ -67,7 +82,13 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'uri': dataSource.uri,
           'useCache': false,
           'maxCacheSize': 0,
-          'maxCacheFileSize': 0
+          'maxCacheFileSize': 0,
+          'showNotification': dataSource.showNotification,
+          'title': dataSource.title,
+          'author': dataSource.author,
+          'imageUrl': dataSource.imageUrl,
+          'notificationChannelName': dataSource.notificationChannelName,
+          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
         };
         break;
     }
@@ -130,6 +151,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     );
   }
 
+  @override
   Future<void> setTrackParameters(
       int textureId, int width, int height, int bitrate) {
     return _channel.invokeMethod<void>(
@@ -165,47 +187,136 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> enablePictureInPicture(int textureId, double top, double left,
+      double width, double height) async {
+    return _channel.invokeMethod<void>(
+      'enablePictureInPicture',
+      <String, dynamic>{
+        'textureId': textureId,
+        'top': top,
+        'left': left,
+        'width': width,
+        'height': height,
+      },
+    );
+  }
+
+  @override
+  Future<bool> isPictureInPictureEnabled(int textureId) {
+    return _channel.invokeMethod<bool>(
+      'isPictureInPictureSupported',
+      <String, dynamic>{
+        'textureId': textureId,
+      },
+    );
+  }
+
+  @override
+  Future<void> disablePictureInPicture(int textureId) {
+    return _channel.invokeMethod<bool>(
+      'disablePictureInPicture',
+      <String, dynamic>{
+        'textureId': textureId,
+      },
+    );
+  }
+
+  @override
   Stream<VideoEvent> videoEventsFor(int textureId) {
     return _eventChannelFor(textureId)
         .receiveBroadcastStream()
         .map((dynamic event) {
-      final Map<dynamic, dynamic> map = event;
-      switch (map['event']) {
+      Map<dynamic, dynamic> map;
+      if (event is Map) {
+        map = event;
+      }
+      final String eventType = map["event"] as String;
+      final String key = map["key"] as String;
+      switch (eventType) {
         case 'initialized':
+          double width = 0;
+          double height = 0;
+
+          try {
+            if (map.containsKey("width")) {
+              final num widthNum = map["width"] as num;
+              width = widthNum.toDouble();
+            }
+            if (map.containsKey("height")) {
+              final num heightNum = map["height"] as num;
+              height = heightNum.toDouble();
+            }
+          } catch (exception) {
+            BetterPlayerUtils.log(exception.toString());
+          }
+
+          final Size size = Size(width, height);
+
           return VideoEvent(
             eventType: VideoEventType.initialized,
-            key: map['key'],
-            duration: Duration(milliseconds: map['duration']),
-            size: Size(map['width']?.toDouble() ?? 0.0,
-                map['height']?.toDouble() ?? 0.0),
+            key: key,
+            duration: Duration(milliseconds: map['duration'] as int),
+            size: size,
           );
         case 'completed':
           return VideoEvent(
             eventType: VideoEventType.completed,
-            key: map['key'],
+            key: key,
           );
         case 'bufferingUpdate':
-          final List<dynamic> values = map['values'];
+          final List<dynamic> values = map['values'] as List;
 
           return VideoEvent(
             eventType: VideoEventType.bufferingUpdate,
-            key: map['key'],
+            key: key,
             buffered: values.map<DurationRange>(_toDurationRange).toList(),
           );
         case 'bufferingStart':
           return VideoEvent(
             eventType: VideoEventType.bufferingStart,
-            key: map['key'],
+            key: key,
           );
         case 'bufferingEnd':
           return VideoEvent(
             eventType: VideoEventType.bufferingEnd,
-            key: map['key'],
+            key: key,
           );
+
+        case 'play':
+          return VideoEvent(
+            eventType: VideoEventType.play,
+            key: key,
+          );
+
+        case 'pause':
+          return VideoEvent(
+            eventType: VideoEventType.pause,
+            key: key,
+          );
+
+        case 'seek':
+          return VideoEvent(
+            eventType: VideoEventType.seek,
+            key: key,
+            position: Duration(milliseconds: map['position'] as int),
+          );
+
+        case 'pipStart':
+          return VideoEvent(
+            eventType: VideoEventType.pipStart,
+            key: key,
+          );
+
+        case 'pipStop':
+          return VideoEvent(
+            eventType: VideoEventType.pipStop,
+            key: key,
+          );
+
         default:
           return VideoEvent(
             eventType: VideoEventType.unknown,
-            key: map['key'],
+            key: key,
           );
       }
     });
@@ -221,10 +332,10 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   DurationRange _toDurationRange(dynamic value) {
-    final List<dynamic> pair = value;
+    final List<dynamic> pair = value as List;
     return DurationRange(
-      Duration(milliseconds: pair[0]),
-      Duration(milliseconds: pair[1]),
+      Duration(milliseconds: pair[0] as int),
+      Duration(milliseconds: pair[1] as int),
     );
   }
 }

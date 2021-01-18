@@ -1,20 +1,29 @@
 import 'dart:io';
 
+import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/auto_fullscreen_orientation_page.dart';
 import 'package:better_player_example/pages/basic_player_page.dart';
 import 'package:better_player_example/pages/cache_page.dart';
+import 'package:better_player_example/pages/change_player_theme_page.dart';
 import 'package:better_player_example/pages/controller_controls_page.dart';
 import 'package:better_player_example/pages/controls_configuration_page.dart';
 import 'package:better_player_example/pages/event_listener_page.dart';
+import 'package:better_player_example/pages/fade_placeholder_page.dart';
 import 'package:better_player_example/pages/hls_subtitles_page.dart';
 import 'package:better_player_example/pages/hls_tracks_page.dart';
 import 'package:better_player_example/pages/memory_player_page.dart';
 import 'package:better_player_example/pages/normal_player_page.dart';
+import 'package:better_player_example/pages/notification_player_page.dart';
+import 'package:better_player_example/pages/overridden_aspect_ratio_page.dart';
+import 'package:better_player_example/pages/overriden_duration_page.dart';
+import 'package:better_player_example/pages/placeholder_until_play_page.dart';
 import 'package:better_player_example/pages/playlist_page.dart';
 import 'package:better_player_example/pages/resolutions_page.dart';
+import 'package:better_player_example/pages/reusable_video_list/reusable_video_list_page.dart';
 import 'package:better_player_example/pages/rotation_and_fit_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
 import 'package:better_player_example/pages/video_list/video_list_page.dart';
+import 'package:better_player_example/pages/picture_in_picture_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -29,6 +38,7 @@ class _WelcomePageState extends State<WelcomePage> {
   void initState() {
     _saveAssetSubtitleToFile();
     _saveAssetVideoToFile();
+    _saveLogoToFile();
     super.initState();
   }
 
@@ -107,6 +117,33 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget("Auto fullscreen orientation page", () {
         _navigateToPage(AutoFullscreenOrientationPage());
       }),
+      _buildExampleElementWidget("Overridden aspect ratio page", () {
+        _navigateToPage(OverriddenAspectRatioPage());
+      }),
+      _buildExampleElementWidget("Overridden aspect ratio page", () {
+        _navigateToPage(OverriddenAspectRatioPage());
+      }),
+      _buildExampleElementWidget("Notifications player page", () {
+        _navigateToPage(NotificationPlayerPage());
+      }),
+      _buildExampleElementWidget("Reusable video list page", () {
+        _navigateToPage(ReusableVideoListPage());
+      }),
+      _buildExampleElementWidget("Fade placeholder page", () {
+        _navigateToPage(FadePlaceholderPage());
+      }),
+      _buildExampleElementWidget("Placeholder until play page", () {
+        _navigateToPage(PlaceholderUntilPlayPage());
+      }),
+      _buildExampleElementWidget("Change player theme page", () {
+        _navigateToPage(ChangePlayerThemePage());
+      }),
+      _buildExampleElementWidget("Overridden duration page", () {
+        _navigateToPage(OverriddenDurationPage());
+      }),
+      _buildExampleElementWidget("Picture in Picture page", () {
+        _navigateToPage(PictureInPicturePage());
+      }),
     ];
   }
 
@@ -152,6 +189,14 @@ class _WelcomePageState extends State<WelcomePage> {
     var content = await rootBundle.load("assets/testvideo.mp4");
     final directory = await getApplicationDocumentsDirectory();
     var file = File("${directory.path}/testvideo.mp4");
+    file.writeAsBytesSync(content.buffer.asUint8List());
+  }
+
+  ///Save logo to file, so we can use it later
+  Future _saveLogoToFile() async {
+    var content = await rootBundle.load("assets/${Constants.logo}");
+    final directory = await getApplicationDocumentsDirectory();
+    var file = File("${directory.path}/${Constants.logo}");
     file.writeAsBytesSync(content.buffer.asUint8List());
   }
 }

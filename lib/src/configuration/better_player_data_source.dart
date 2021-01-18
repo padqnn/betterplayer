@@ -1,4 +1,6 @@
+// Project imports:
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
+import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
 
 import 'better_player_cache_configuration.dart';
@@ -41,6 +43,12 @@ class BetterPlayerDataSource {
   ///List of bytes, used only in memory player
   final List<int> bytes;
 
+  ///Configuration of remote controls notification
+  final BetterPlayerNotificationConfiguration notificationConfiguration;
+
+  ///Duration which will be returned instead of original duration
+  final Duration overriddenDuration;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -53,11 +61,14 @@ class BetterPlayerDataSource {
     this.hlsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
+    this.notificationConfiguration =
+        const BetterPlayerNotificationConfiguration(showNotification: false),
+    this.overriddenDuration,
   }) : assert(
-            ((type == BetterPlayerDataSourceType.NETWORK ||
-                        type == BetterPlayerDataSourceType.FILE) &&
+            ((type == BetterPlayerDataSourceType.network ||
+                        type == BetterPlayerDataSourceType.file) &&
                     url != null) ||
-                (type == BetterPlayerDataSourceType.MEMORY &&
+                (type == BetterPlayerDataSourceType.memory &&
                     bytes?.isNotEmpty == true),
             "Url can't be null in network or file data source | bytes can't be null when using memory data source");
 
@@ -72,9 +83,11 @@ class BetterPlayerDataSource {
     bool useHlsTracks,
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
+    BetterPlayerNotificationConfiguration notificationConfiguration,
+    Duration overriddenDuration,
   }) {
     return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.NETWORK,
+      BetterPlayerDataSourceType.network,
       url,
       subtitles: subtitles,
       liveStream: liveStream,
@@ -83,6 +96,8 @@ class BetterPlayerDataSource {
       useHlsTracks: useHlsTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
+      notificationConfiguration: notificationConfiguration,
+      overriddenDuration: overriddenDuration,
     );
   }
 
@@ -95,34 +110,40 @@ class BetterPlayerDataSource {
     bool useHlsTracks,
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
+    BetterPlayerNotificationConfiguration notificationConfiguration,
+    Duration overriddenDuration,
   }) {
-    return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.NETWORK,
-      url,
-      subtitles: subtitles,
-      useHlsSubtitles: useHlsSubtitles,
-      useHlsTracks: useHlsTracks,
-      resolutions: qualities,
-    );
+    return BetterPlayerDataSource(BetterPlayerDataSourceType.file, url,
+        subtitles: subtitles,
+        useHlsSubtitles: useHlsSubtitles,
+        useHlsTracks: useHlsTracks,
+        resolutions: qualities,
+        cacheConfiguration: cacheConfiguration,
+        notificationConfiguration: notificationConfiguration,
+        overriddenDuration: overriddenDuration);
   }
 
   ///Factory method to build network data source which uses bytes as data source.
   ///Url parameter is not used in this data source.
-  factory BetterPlayerDataSource.memory(List<int> bytes,
-      {List<BetterPlayerSubtitlesSource> subtitles,
-      bool useHlsSubtitles,
-      bool useHlsTracks,
-      Map<String, String> qualities,
-      BetterPlayerCacheConfiguration cacheConfiguration}) {
-    return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.MEMORY,
-      "",
-      bytes: bytes,
-      subtitles: subtitles,
-      useHlsSubtitles: useHlsSubtitles,
-      useHlsTracks: useHlsTracks,
-      resolutions: qualities,
-    );
+  factory BetterPlayerDataSource.memory(
+    List<int> bytes, {
+    List<BetterPlayerSubtitlesSource> subtitles,
+    bool useHlsSubtitles,
+    bool useHlsTracks,
+    Map<String, String> qualities,
+    BetterPlayerCacheConfiguration cacheConfiguration,
+    BetterPlayerNotificationConfiguration notificationConfiguration,
+    Duration overriddenDuration,
+  }) {
+    return BetterPlayerDataSource(BetterPlayerDataSourceType.memory, "",
+        bytes: bytes,
+        subtitles: subtitles,
+        useHlsSubtitles: useHlsSubtitles,
+        useHlsTracks: useHlsTracks,
+        resolutions: qualities,
+        cacheConfiguration: cacheConfiguration,
+        notificationConfiguration: notificationConfiguration,
+        overriddenDuration: overriddenDuration);
   }
 
   BetterPlayerDataSource copyWith({
@@ -134,8 +155,10 @@ class BetterPlayerDataSource {
     Map<String, String> headers,
     bool useHlsSubtitles,
     bool useHlsTracks,
-    Map<String, String> qualities,
+    Map<String, String> resolutions,
     BetterPlayerCacheConfiguration cacheConfiguration,
+    BetterPlayerNotificationConfiguration notificationConfiguration,
+    Duration overriddenDuration,
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,
@@ -146,8 +169,11 @@ class BetterPlayerDataSource {
       headers: headers ?? this.headers,
       useHlsSubtitles: useHlsSubtitles ?? this.useHlsSubtitles,
       useHlsTracks: useHlsTracks ?? this.useHlsTracks,
-      resolutions: qualities ?? this.resolutions,
+      resolutions: resolutions ?? this.resolutions,
       cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
+      notificationConfiguration:
+          notificationConfiguration ?? this.notificationConfiguration,
+      overriddenDuration: overriddenDuration ?? this.overriddenDuration,
     );
   }
 }

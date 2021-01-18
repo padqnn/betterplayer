@@ -1,3 +1,78 @@
+## 0.0.46
+* Fixed iOS AVPlayer observer issue.
+* Fixed iOS headers not applied issue.
+
+## 0.0.45
+* Added Picture in Picture support.
+* Added new parameters in BetterPlayerControlsConfiguration: pipMenuIcon and enablePip.
+* Added new methods in BetterPlayerController: enablePictureInPicture, disablePictureInPicture, isPictureInPictureSupported,
+setBetterPlayerGlobalKey.
+* Added Picture in Picture icon in player controls.
+* Added Picture in Picture example.
+* Updated ExoPlayer version.
+* Added pipStart and pipStop events.
+* [BREAKING_CHANGE] Removed skipsTimeInMilliseconds. Added forwardSkipTimeInMilliseconds and backwardSkipTimeInMilliseconds.
+* Updated notification service in android example.
+* Fixed event play/pause event not triggered when controlling video with PiP or remote notification.
+* Fixed playerTheme not set correctly.
+* Fixed progress bar able to drag over other buttons.
+* Fixed iOS player last second issue (player did not complete on last second of resource).
+
+## 0.0.44
+* Added placeholder until play example
+* Added playback stalled feature in iOS. iOS version should behave same as Android once video failed to load.
+* Added BetterPlayerTheme to controls configuration (added by https://github.com/maine98).
+* [BREAKING_CHANGE] Changed custom controls builder in BetterPlayerControlsConfiguration. Now it accepts BetterPlayerController.
+* Exposed BetterPlayerPlaylistState and betterPlayerController getter within.
+* Added overriddenDuration to BetterPlayerDataSource.
+
+## 0.0.43
+* Added autoDispose flag in BetterPlayerConfiguration
+* Added removeEventsListener in BetterPlayerController
+* Video list examples update
+* Fixed Android native build warnings
+* Fixed placeholder until play issues
+* Added placeholderOnTop to the BetterPlayerConfiguration
+* Lint fixes
+
+## 0.0.42
+* Fixed resolution issue
+* Fixed type of BetterPlayerDataSource for file type
+* Added audio notify on dispose (iOS) (fixed by https://github.com/kingiol)
+
+## 0.0.41
+* Fixed loadingColor and loadingWidget for cupertino player
+* Increased size of cupertino buttons
+* Fixed setControlsEnabled in cupertino/material player
+* [BREAKING_CHANGE] Removed startAt, looping, placeholder, overlay, fullScreenByDefault,
+ allowedScreenSleep, systemOverlaysAfterFullScreen, deviceOrientationsAfterFullScreen from BetterPlayerController
+
+## 0.0.40
+* Exposed VideoPlayerValue in export
+* Fixed log issue
+* Added loadingColor and loadingWidget in BetterPlayerControlsConfiguration
+
+## 0.0.39
+* Added lint library for dart analysis
+* [BREAKING_CHANGE] Changed constant names to lowerCamelCase in BetterPlayerDataSourceType
+* [BREAKING_CHANGE] Changed constant names to lowerCamelCase in BetterPlayerEventType
+* [BREAKING_CHANGE] Changed constant names to lowerCamelCase in BetterPlayerSubtitlesSourceType
+
+## 0.0.38
+* Added support for player notifications
+* Added handleLifecycle to BetterPlayerConfiguration
+* Added notificationConfiguration to BetterPlayerDataSource
+
+## 0.0.37
+* Added setControlsEnabled to BetterPlayerController
+* Fixed example video list widget buttons not rendering correctly in small resolutions
+* Added setOverriddenAspectRatio to BetterPlayerController
+* Fixed crash connected with setSpeed in Android platform
+* Fixed deviceOrientationsOnFullScreen for iOS
+* Fixed CH translations (fixes by https://github.com/JarvanMo)
+* Click to show/hide controls (fixed by https://github.com/mtAlves)
+* [BREAKING_CHANGE] Removed future from isPlaying. Now it's sync method (https://github.com/hongfeiyang)
+
 ## 0.0.36
 * Added INITIALIZED event
 * Added autoDetectFullscreenDeviceOrientation in BetterPlayerConfiguration

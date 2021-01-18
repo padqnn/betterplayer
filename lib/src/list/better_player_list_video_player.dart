@@ -1,3 +1,5 @@
+// Flutter imports:
+// Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
 import 'package:better_player/src/configuration/better_player_data_source.dart';
@@ -82,9 +84,8 @@ class _BetterPlayerListVideoPlayerState
   Widget build(BuildContext context) {
     super.build(context);
     return AspectRatio(
-      aspectRatio:
-          _betterPlayerController.betterPlayerConfiguration.aspectRatio ??
-              BetterPlayerUtils.calculateAspectRatio(context),
+      aspectRatio: _betterPlayerController.getAspectRatio() ??
+          BetterPlayerUtils.calculateAspectRatio(context),
       child: BetterPlayer(
         key: Key("${_getUniqueKey()}_player"),
         controller: _betterPlayerController,
@@ -93,8 +94,8 @@ class _BetterPlayerListVideoPlayerState
   }
 
   void onVisibilityChanged(double visibleFraction) async {
-    bool isPlaying = await _betterPlayerController.isPlaying();
-    bool initialized = _betterPlayerController.isVideoInitialized();
+    final bool isPlaying = _betterPlayerController.isPlaying();
+    final bool initialized = _betterPlayerController.isVideoInitialized();
     if (visibleFraction >= widget.playFraction) {
       if (widget.autoPlay && initialized && !isPlaying && !_isDisposing) {
         _betterPlayerController.play();

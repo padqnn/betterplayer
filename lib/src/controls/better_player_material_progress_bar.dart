@@ -1,3 +1,5 @@
+// Flutter imports:
+// Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -7,12 +9,15 @@ import 'package:flutter/widgets.dart';
 
 class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
   BetterPlayerMaterialVideoProgressBar(
-      this.controller, this.betterPlayerController,
-      {BetterPlayerProgressColors colors,
-      this.onDragEnd,
-      this.onDragStart,
-      this.onDragUpdate})
-      : colors = colors ?? BetterPlayerProgressColors();
+    this.controller,
+    this.betterPlayerController, {
+    BetterPlayerProgressColors colors,
+    this.onDragEnd,
+    this.onDragStart,
+    this.onDragUpdate,
+    Key key,
+  })  : colors = colors ?? BetterPlayerProgressColors(),
+        super(key: key);
 
   final VideoPlayerController controller;
   final BetterPlayerController betterPlayerController;
@@ -61,24 +66,13 @@ class _VideoProgressBarState
       final box = context.findRenderObject() as RenderBox;
       final Offset tapPos = box.globalToLocal(globalPosition);
       final double relative = tapPos.dx / box.size.width;
-      final Duration position = controller.value.duration * relative;
-      betterPlayerController.seekTo(position);
+      if (relative > 0) {
+        final Duration position = controller.value.duration * relative;
+        betterPlayerController.seekTo(position);
+      }
     }
 
     return GestureDetector(
-      child: Center(
-        child: Container(
-          height: MediaQuery.of(context).size.height / 2,
-          width: MediaQuery.of(context).size.width,
-          color: Colors.transparent,
-          child: CustomPaint(
-            painter: _ProgressBarPainter(
-              controller.value,
-              widget.colors,
-            ),
-          ),
-        ),
-      ),
       onHorizontalDragStart: (DragStartDetails details) {
         if (!controller.value.initialized) {
           return;
@@ -119,6 +113,19 @@ class _VideoProgressBarState
         }
         seekToRelativePosition(details.globalPosition);
       },
+      child: Center(
+        child: Container(
+          height: MediaQuery.of(context).size.height / 2,
+          width: MediaQuery.of(context).size.width,
+          color: Colors.transparent,
+          child: CustomPaint(
+            painter: _ProgressBarPainter(
+              controller.value,
+              widget.colors,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -136,7 +143,7 @@ class _ProgressBarPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final height = 2.0;
+    const height = 2.0;
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
@@ -144,7 +151,7 @@ class _ProgressBarPainter extends CustomPainter {
           Offset(0.0, size.height / 2),
           Offset(size.width, size.height / 2 + height),
         ),
-        Radius.circular(4.0),
+        const Radius.circular(4.0),
       ),
       colors.backgroundPaint,
     );
@@ -155,7 +162,7 @@ class _ProgressBarPainter extends CustomPainter {
         value.position.inMilliseconds / value.duration.inMilliseconds;
     final double playedPart =
         playedPartPercent > 1 ? size.width : playedPartPercent * size.width;
-    for (DurationRange range in value.buffered) {
+    for (final DurationRange range in value.buffered) {
       final double start = range.startFraction(value.duration) * size.width;
       final double end = range.endFraction(value.duration) * size.width;
       canvas.drawRRect(
@@ -164,7 +171,7 @@ class _ProgressBarPainter extends CustomPainter {
             Offset(start, size.height / 2),
             Offset(end, size.height / 2 + height),
           ),
-          Radius.circular(4.0),
+          const Radius.circular(4.0),
         ),
         colors.bufferedPaint,
       );
@@ -175,7 +182,7 @@ class _ProgressBarPainter extends CustomPainter {
           Offset(0.0, size.height / 2),
           Offset(playedPart, size.height / 2 + height),
         ),
-        Radius.circular(4.0),
+        const Radius.circular(4.0),
       ),
       colors.playedPaint,
     );

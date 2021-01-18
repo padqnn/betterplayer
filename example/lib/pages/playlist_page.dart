@@ -10,30 +10,32 @@ class PlaylistPage extends StatefulWidget {
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {
-  List dataSourceList = List<BetterPlayerDataSource>();
+  final GlobalKey<BetterPlayerPlaylistState> _betterPlayerPlaylistStateKey =
+      GlobalKey();
+  List<BetterPlayerDataSource> _dataSourceList = [];
 
   Future<List<BetterPlayerDataSource>> setupData() async {
-    dataSourceList.add(
+    _dataSourceList.add(
       BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
+        BetterPlayerDataSourceType.network,
         Constants.forBiggerBlazesUrl,
         subtitles: BetterPlayerSubtitlesSource.single(
-            type: BetterPlayerSubtitlesSourceType.FILE,
+            type: BetterPlayerSubtitlesSourceType.file,
             url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl)),
       ),
     );
 
-    dataSourceList.add(BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK, Constants.bugBuckBunnyVideoUrl));
-    dataSourceList.add(
+    _dataSourceList.add(BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network, Constants.bugBuckBunnyVideoUrl));
+    _dataSourceList.add(
       BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
+        BetterPlayerDataSourceType.network,
         Constants.phantomVideoUrl,
         liveStream: true,
       ),
     );
 
-    return dataSourceList;
+    return _dataSourceList;
   }
 
   @override
@@ -57,6 +59,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
               ),
               AspectRatio(
                 child: BetterPlayerPlaylist(
+                  key: _betterPlayerPlaylistStateKey,
                   betterPlayerConfiguration: BetterPlayerConfiguration(
                       autoPlay: true,
                       aspectRatio: 1,
@@ -76,7 +79,19 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   betterPlayerDataSourceList: snapshot.data,
                 ),
                 aspectRatio: 1,
-              )
+              ),
+              ElevatedButton(
+                child: Text("Get current position"),
+                onPressed: () {
+                  var position = _betterPlayerPlaylistStateKey
+                      .currentState
+                      .betterPlayerController
+                      .videoPlayerController
+                      .value
+                      .position;
+                  print("The position is: $position");
+                },
+              ),
             ]);
           }
         },
