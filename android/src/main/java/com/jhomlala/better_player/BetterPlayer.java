@@ -1,7 +1,8 @@
 package com.jhomlala.better_player;
 
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFFimport android.app.NotificationChannel;
+import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -75,7 +76,6 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
