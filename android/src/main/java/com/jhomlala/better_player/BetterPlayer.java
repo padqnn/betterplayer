@@ -2,6 +2,7 @@ package com.jhomlala.better_player;
 
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -41,41 +42,19 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.ui.PlayerNotificationManager;
+//for SPLASH
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.ui.PlayerNotificationManager;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ControlDispatcher;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Player.EventListener;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
-import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.ui.PlayerNotificationManager;
+//end for SPLASH
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -128,9 +107,8 @@ final class BetterPlayer {
             Result result) {
         this.eventChannel = eventChannel;
         this.textureEntry = textureEntry;
+        trackSelector = new DefaultTrackSelector(context);
 
-        trackSelector = new DefaultTrackSelector();
-       
         //Adding this code for SPLASH
         LoadControl loadControl = new DefaultLoadControl.Builder()
         .setAllocator(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE))
@@ -145,6 +123,8 @@ final class BetterPlayer {
         .createDefaultLoadControl();
         exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl);
         //End --- Adding this code for SPLASH
+
+        //exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
 
         setupVideoPlayer(eventChannel, textureEntry, result);
     }
@@ -493,7 +473,7 @@ private ControlDispatcher setupControlDispatcher() {
 
         exoPlayer.addListener(
                 new EventListener() {
-                    
+
                     //Adding this code for SPLASH
                     public void onIsLoadingChanged​(boolean bool){
                         if (isInitialized && bool == false) {
@@ -732,108 +712,6 @@ private ControlDispatcher setupControlDispatcher() {
         return result;
     }
 
-ess(event);
-        }
-    }
-
-    void dispose() {
-        if (isInitialized) {
-            exoPlayer.stop();
-        }
-        textureEntry.release();
-        eventChannel.setStreamHandler(null);
-        if (surface != null) {
-            surface.release();
-        }
-        if (exoPlayer != null) {
-            exoPlayer.release();
-        }
-    }
-(event);
-        }
-    }
-
-    void dispose() {
-        if (isInitialized) {
-            exoPlayer.stop();
-        }
-        textureEntry.release();
-        eventChannel.setStreamHandler(null);
-        if (surface != null) {
-            surface.release();
-        }
-        if (exoPlayer != null) {
-            exoPlayer.release();
-        }
-    }
-(event);
-        }
-    }
-
-    void dispose() {
-        if (isInitialized) {
-            exoPlayer.stop();
-        }
-        textureEntry.release();
-        eventChannel.setStreamHandler(null);
-        if (surface != null) {
-            surface.release();
-        }
-        if (exoPlayer != null) {
-            exoPlayer.release();
-        }
-    }
-(event);
-        }
-    }
-
-    void dispose() {
-        if (isInitialized) {
-            exoPlayer.stop();
-        }
-        textureEntry.release();
-        eventChannel.setStreamHandler(null);
-        if (surface != null) {
-            surface.release();
-        }
-        if (exoPlayer != null) {
-            exoPlayer.release();
-        }
-    }
-(event);
-        }
-    }
-
-    void dispose() {
-        if (isInitialized) {
-            exoPlayer.stop();
-        }
-        textureEntry.release();
-        eventChannel.setStreamHandler(null);
-        if (surface != null) {
-            surface.release();
-        }
-        if (exoPlayer != null) {
-            exoPlayer.release();
-        }
-    }
-ss(event);
-        }
-    }
-
-    void dispose() {
-        if (isInitialized) {
-            exoPlayer.stop();
-        }
-        textureEntry.release();
-        eventChannel.setStreamHandler(null);
-        if (surface != null) {
-            surface.release();
-        }
-        if (exoPlayer != null) {
-            exoPlayer.release();
-        }
-    }
 }
 
 
