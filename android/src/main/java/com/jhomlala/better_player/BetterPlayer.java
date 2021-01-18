@@ -128,7 +128,6 @@ final class BetterPlayer {
             Result result) {
         this.eventChannel = eventChannel;
         this.textureEntry = textureEntry;
-<<<<<<< HEAD
 
         trackSelector = new DefaultTrackSelector();
        
@@ -146,10 +145,6 @@ final class BetterPlayer {
         .createDefaultLoadControl();
         exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl);
         //End --- Adding this code for SPLASH
-=======
-        trackSelector = new DefaultTrackSelector(context);
-        exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
->>>>>>> fd4b63eb882b47365e1b59e899715996ed71345c
 
         setupVideoPlayer(eventChannel, textureEntry, result);
     }
@@ -584,15 +579,8 @@ private ControlDispatcher setupControlDispatcher() {
 
     void setSpeed(double value) {
         float bracketedValue = (float) value;
-<<<<<<< HEAD
-        PlaybackParameters existingParam = exoPlayer.getPlaybackParameters();
-        PlaybackParameters newParameter =
-                new PlaybackParameters(bracketedValue, existingParam.pitch);
-        exoPlayer.setPlaybackParameters(newParameter);
-=======
         PlaybackParameters playbackParameters = new PlaybackParameters(bracketedValue);
         exoPlayer.setPlaybackParameters(playbackParameters);
->>>>>>> fd4b63eb882b47365e1b59e899715996ed71345c
     }
 
     void setTrackParameters(int width, int height, int bitrate) {
