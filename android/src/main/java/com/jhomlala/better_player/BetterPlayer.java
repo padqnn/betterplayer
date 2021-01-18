@@ -50,6 +50,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 //for SPLASH
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
+import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.LoadControl;
