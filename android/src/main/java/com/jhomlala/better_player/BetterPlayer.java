@@ -317,7 +317,7 @@ final class BetterPlayer {
         };
 
         exoPlayer.addListener(exoPlayerEventListener);
-        exoPlayer.seekTo(0);
+        //exoPlayer.seekTo(0);
     }
 
 
