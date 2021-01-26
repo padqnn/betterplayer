@@ -101,6 +101,11 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('showNotification() has not been implemented.');
   }
 
+  /// Remove notification
+  Future<void> removeNotification(int textureId) {
+    throw UnimplementedError('RemoveNotification() has not been implemented.');
+  }
+
   /// Stops the video playback.
   Future<void> pause(int textureId) {
     throw UnimplementedError('pause() has not been implemented.');

@@ -481,6 +481,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     await _videoPlayerPlatform.showNotification(_textureId);
   }
 
+  Future<void> removeNotification() async{
+    await _videoPlayerPlatform.removeNotification(_textureId);
+  }
+
+
   Future<void> _applyPlayPause() async {
     if (!_created || _isDisposed) {
       return;
