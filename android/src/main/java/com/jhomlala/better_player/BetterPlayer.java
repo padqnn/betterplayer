@@ -242,11 +242,43 @@ final class BetterPlayer {
         playerNotificationManager = new PlayerNotificationManager(context,
                 playerNotificationChannelName,
                 NOTIFICATION_ID,
-                mediaDescriptionAdapter);
+                mediaDescriptionAdapter){
+                    @Override
+                    protected int[] getActionIndicesForCompactView(List<String> actionNames, Player player) {
+                        int pauseActionIndex = actionNames.indexOf(ACTION_PAUSE);
+                        int playActionIndex = actionNames.indexOf(ACTION_PLAY);
+                        int stopActionIndex = actionNames.indexOf(ACTION_STOP);
+                        int skipPreviousActionIndex = actionNames.indexOf(ACTION_PREVIOUS);
+                
+                        int numberOfActionIndices = (pauseActionIndex != -1 || playActionIndex != -1) ? 1 : 0;
+                
+                        if (stopActionIndex != -1) {
+                            numberOfActionIndices++;
+                        }
+                        if (skipPreviousActionIndex != -1) {
+                            numberOfActionIndices++;
+                        }
+                
+                        int[] actionIndices = new int[3];
+                        int actionCounter = 0;
+                        if (skipPreviousActionIndex != -1) {
+                            actionIndices[actionCounter++] = skipPreviousActionIndex;
+                        }
+                        if (pauseActionIndex != -1) {
+                            actionIndices[actionCounter++] = pauseActionIndex;
+                        }
+                        if (playActionIndex != -1) {
+                            actionIndices[actionCounter++] = playActionIndex;
+                        }
+                        if (stopActionIndex != -1) {
+                            actionIndices[actionCounter] = stopActionIndex;
+                        }
+                        return actionIndices;
+                    }};
         playerNotificationManager.setPlayer(exoPlayer);
         playerNotificationManager.setUseNextAction(false);
-        playerNotificationManager.setUsePreviousAction(false);
-        playerNotificationManager.setUseStopAction(false);
+        playerNotificationManager.setUsePreviousAction(true);
+        playerNotificationManager.setUseStopAction(true);
 
         MediaSessionCompat mediaSession = setupMediaSession(context, false);
         playerNotificationManager.setMediaSessionToken(mediaSession.getSessionToken());
@@ -317,7 +349,10 @@ final class BetterPlayer {
 
             @Override
             public boolean dispatchPrevious(Player player) {
-                return false;
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "previous");
+                eventSink.success(event);
+                return true;
             }
 
             @Override
@@ -347,7 +382,10 @@ final class BetterPlayer {
 
             @Override
             public boolean dispatchStop(Player player, boolean reset) {
-                return false;
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "next");
+                eventSink.success(event);
+                return true;
             }
 
             @Override

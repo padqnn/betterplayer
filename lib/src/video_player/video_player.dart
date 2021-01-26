@@ -44,6 +44,8 @@ class VideoPlayerValue {
     this.speed = 1.0,
     this.errorDescription,
     this.isPip = false,
+    this.previous = false,
+    this.next = false,
   });
 
   /// Returns an instance with a `null` [Duration].
@@ -104,6 +106,12 @@ class VideoPlayerValue {
   ///Is in Picture in Picture Mode
   final bool isPip;
 
+  ///Should go to previous video
+  final bool previous;
+
+  ///Should go to next video
+  final bool next;
+
   /// Indicates whether or not the video has been loaded and is ready to play.
   bool get initialized => duration != null;
 
@@ -140,6 +148,8 @@ class VideoPlayerValue {
     String errorDescription,
     double speed,
     bool isPip,
+    bool next,
+    bool previous,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -155,6 +165,8 @@ class VideoPlayerValue {
       speed: speed ?? this.speed,
       errorDescription: errorDescription ?? this.errorDescription,
       isPip: isPip ?? this.isPip,
+      next: next ?? this.next,
+      previous: previous ?? this.previous,
     );
   }
 
@@ -262,6 +274,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           break;
         case VideoEventType.pipStop:
           value = value.copyWith(isPip: false);
+          break;
+        case VideoEventType.next:
+          value = value.copyWith(next: true);
+          break;
+        case VideoEventType.previous:
+          value = value.copyWith(previous: true);
           break;
         case VideoEventType.unknown:
           break;
