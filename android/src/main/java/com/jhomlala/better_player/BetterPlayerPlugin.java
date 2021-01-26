@@ -350,8 +350,8 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                     String title = getParameter(dataSource, TITLE_PARAMETER, "");
                     String author = getParameter(dataSource, AUTHOR_PARAMETER, "");
                     String imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "");
-                    //String notificationChannelName = getParameter(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null);
-                    betterPlayer.setupPlayerNotification(flutterState.applicationContext, title, author, imageUrl, null);
+                    String notificationChannelName = getParameter(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null);
+                    betterPlayer.setupPlayerNotification(flutterState.applicationContext, title, author, imageUrl);
                 }
             }
         } catch (Exception exception) {
