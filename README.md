@@ -36,7 +36,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.46
+  better_player: ^0.0.48
 ```
 
 2. Install it
@@ -896,6 +896,11 @@ Known limitations:
 Android: When PiP is enabled, Better Player will open full screen mode to play video correctly. When
 user disables PiP, Better Player will back to the previous settings and for a half of second your device
 will have incorrect orientation.
+
+### Set controls always visible
+```dart
+    betterPlayerController.setControlsAlwaysVisible(true);
+```
 
 
 ### More documentation

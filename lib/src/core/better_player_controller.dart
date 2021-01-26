@@ -138,6 +138,11 @@ class BetterPlayerController extends ChangeNotifier {
   ///StreamSubscription for VideoEvent listener
   StreamSubscription<VideoEvent> _videoEventStreamSubscription;
 
+  ///Are controls always visible
+  bool _controlsAlwaysVisible = false;
+
+  bool get controlsAlwaysVisible => _controlsAlwaysVisible;
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -756,9 +761,20 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  ///Setup controls always visible mode
+  void setControlsAlwaysVisible(bool controlsAlwaysVisible) {
+    assert(
+        controlsAlwaysVisible != null, "ControlsAlwaysVisible can't be null");
+    _controlsAlwaysVisible = controlsAlwaysVisible;
+    _controlsVisibilityStreamController.add(controlsAlwaysVisible);
+  }
+
+  ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then
+  ///autoDispose parameter will be overridden and controller will be disposed
+  ///(if it wasn't disposed before).
   @override
-  void dispose() {
-    if (!betterPlayerConfiguration.autoDispose) {
+  void dispose({bool forceDispose = false}) {
+    if (!betterPlayerConfiguration.autoDispose && !forceDispose) {
       return;
     }
     if (!_disposed) {

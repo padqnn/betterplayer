@@ -29,6 +29,7 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Player.EventListener;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -60,6 +61,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.media.session.MediaButtonReceiver;
+
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
@@ -226,7 +228,7 @@ final class BetterPlayer {
         String playerNotificationChannelName = notificationChannelName;
         if (notificationChannelName == null) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                int importance = NotificationManager.IMPORTANCE_LOW;
                 NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL,
                         DEFAULT_NOTIFICATION_CHANNEL, importance);
                 channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL);
@@ -287,7 +289,7 @@ final class BetterPlayer {
     }
 
 
-private ControlDispatcher setupControlDispatcher() {
+    private ControlDispatcher setupControlDispatcher() {
         return new ControlDispatcher() {
             @Override
             public boolean dispatchPrepare(Player player) {
@@ -493,14 +495,15 @@ private ControlDispatcher setupControlDispatcher() {
                             event.put("event", "bufferingStart");
                             eventSink.success(event);
                         } else if (playbackState == Player.STATE_READY) {
-                            if (isInitialized) {
-                                Map<String, Object> event = new HashMap<>();
-                                event.put("event", "bufferingEnd");
-                                eventSink.success(event);
-                            } else {
+                            if (!isInitialized) {
                                 isInitialized = true;
                                 sendInitialized();
                             }
+
+                            Map<String, Object> event = new HashMap<>();
+                            event.put("event", "bufferingEnd");
+                            eventSink.success(event);
+
                         } else if (playbackState == Player.STATE_ENDED) {
                             Map<String, Object> event = new HashMap<>();
                             event.put("event", "completed");
@@ -580,6 +583,16 @@ private ControlDispatcher setupControlDispatcher() {
     }
 
     long getPosition() {
+        return exoPlayer.getCurrentPosition();
+    }
+
+    long getAbsolutePosition() {
+        Timeline timeline = exoPlayer.getCurrentTimeline();
+        if (!timeline.isEmpty()) {
+            long windowStartTimeMs = timeline.getWindow(0, new Timeline.Window()).windowStartTimeMs;
+            long pos = exoPlayer.getCurrentPosition();
+            return (windowStartTimeMs + pos);
+        }
         return exoPlayer.getCurrentPosition();
     }
 

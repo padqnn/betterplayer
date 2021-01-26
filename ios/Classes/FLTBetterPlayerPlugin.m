@@ -18,6 +18,10 @@ int64_t FLTCMTimeToMillis(CMTime time) {
     return time.value * 1000 / time.timescale;
 }
 
+int64_t FLTNSTimeIntervalToMillis(NSTimeInterval interval) {
+    return (int64_t)(interval * 1000.0);
+}
+
 @interface FLTFrameUpdater : NSObject
 @property(nonatomic) int64_t textureId;
 @property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry>* registry;
@@ -85,6 +89,11 @@ AVPictureInPictureController *_pipController;
     _disposed = false;
     _player = [[AVPlayer alloc] init];
     _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+    
+    ///Fix for loading large videos
+    if (@available(iOS 10.0, *)) {
+        _player.automaticallyWaitsToMinimizeStalling = false;
+    }
     _displayLink = [CADisplayLink displayLinkWithTarget:frameUpdater
                                                selector:@selector(onDisplayLink:)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
@@ -113,7 +122,8 @@ AVPictureInPictureController *_pipController;
                                                  selector:@selector(itemDidPlayToEndTime:)
                                                      name:AVPlayerItemDidPlayToEndTimeNotification
                                                    object:item];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
+        ///Currently disabled, because it leads to unexpected problems
+        //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
         self._observersAdded = true;
     }
 }
@@ -165,7 +175,8 @@ AVPictureInPictureController *_pipController;
         [[_player currentItem] removeObserver:self
                                    forKeyPath:@"playbackBufferFull"
                                       context:playbackBufferFullContext];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
+        ///Currently disabled
+        ///[[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self];
         self._observersAdded = false;
     }
@@ -477,6 +488,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     return FLTCMTimeToMillis([_player currentTime]);
 }
 
+- (int64_t)absolutePosition {
+  return FLTNSTimeIntervalToMillis([[[_player currentItem] currentDate] timeIntervalSince1970]);
+}
+
 - (int64_t)duration {
     CMTime time;
     if (@available(iOS 13, *)) {
@@ -492,9 +507,21 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)seekTo:(int)location {
+    ///When player is playing, pause video, seek to new position and start again. This will prevent issues with seekbar jumps.
+    bool wasPlaying = _isPlaying;
+    if (wasPlaying){
+        [_player pause];
+    }
+
     [_player seekToTime:CMTimeMake(location, 1000)
         toleranceBefore:kCMTimeZero
-         toleranceAfter:kCMTimeZero];
+         toleranceAfter:kCMTimeZero
+            completionHandler:^(BOOL finished){
+        if (wasPlaying){
+            [self->_player play];
+        }
+    }];
+
 }
 
 - (void)setIsLooping:(bool)isLooping {
@@ -1065,6 +1092,8 @@ NSMutableDictionary*  _artworkImageDict;
             result(nil);
         } else if ([@"position" isEqualToString:call.method]) {
             result(@([player position]));
+        } else if ([@"absolutePosition" isEqualToString:call.method]) {
+              result(@([player absolutePosition]));
         } else if ([@"seekTo" isEqualToString:call.method]) {
             [player seekTo:[argsMap[@"location"] intValue]];
             result(nil);
