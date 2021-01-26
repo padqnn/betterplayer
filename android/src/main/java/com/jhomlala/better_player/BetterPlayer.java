@@ -280,8 +280,8 @@ final class BetterPlayer {
         playerNotificationManager.setUsePreviousAction(true);
         playerNotificationManager.setUseStopAction(true);
 
-        MediaSessionCompat mediaSession = setupMediaSession(context, false);
-        playerNotificationManager.setMediaSessionToken(mediaSession.getSessionToken());
+        //MediaSessionCompat mediaSession = setupMediaSession(context, false);
+        //playerNotificationManager.setMediaSessionToken(mediaSession.getSessionToken());
 
 
         playerNotificationManager.setControlDispatcher(setupControlDispatcher());
@@ -301,7 +301,7 @@ final class BetterPlayer {
                             .build();
                 }
 
-                mediaSession.setPlaybackState(playbackState);
+                //mediaSession.setPlaybackState(playbackState);
                 refreshHandler.postDelayed(refreshRunnable, 1000);
             };
             refreshHandler.postDelayed(refreshRunnable, 0);
@@ -310,9 +310,9 @@ final class BetterPlayer {
         exoPlayerEventListener = new EventListener() {
             @Override
             public void onPlaybackStateChanged(int playbackState) {
-                mediaSession.setMetadata(new MediaMetadataCompat.Builder()
-                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, getDuration())
-                        .build());
+                // mediaSession.setMetadata(new MediaMetadataCompat.Builder()
+                //         .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, getDuration())
+                //         .build());
             }
         };
 
