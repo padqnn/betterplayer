@@ -58,6 +58,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String HEIGHT_PARAMETER = "height";
     private static final String BITRATE_PARAMETER = "bitrate";
     private static final String SHOW_NOTIFICATION_PARAMETER = "showNotification";
+    private static final String SHOW_NOTIFICATION = "showNotificationMethod";
     private static final String TITLE_PARAMETER = "title";
     private static final String AUTHOR_PARAMETER = "author";
     private static final String IMAGE_URL_PARAMETER = "imageUrl";
@@ -216,8 +217,12 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 result.success(null);
                 break;
             case PLAY_METHOD:
-                setupNotification(player);
+                //setupNotification(player);
                 player.play();
+                result.success(null);
+                break;
+            case SHOW_NOTIFICATION:
+                setupNotification(player);
                 result.success(null);
                 break;
             case PAUSE_METHOD:

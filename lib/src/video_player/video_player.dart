@@ -477,6 +477,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     await _videoPlayerPlatform.setLooping(_textureId, value.isLooping);
   }
 
+  Future<void> showNotification() async{
+    await _videoPlayerPlatform.showNotification(_textureId);
+  }
+
   Future<void> _applyPlayPause() async {
     if (!_created || _isDisposed) {
       return;

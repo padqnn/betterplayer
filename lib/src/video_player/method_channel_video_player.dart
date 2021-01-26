@@ -122,6 +122,14 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> showNotification(int textureId) {
+    return _channel.invokeMethod<void>(
+      'showNotificationMethod',
+      <String, dynamic>{'textureId': textureId},
+    );
+  }
+
+  @override
   Future<void> pause(int textureId) {
     return _channel.invokeMethod<void>(
       'pause',
