@@ -75,6 +75,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 import com.google.android.exoplayer2.PlaybackParameters;
 
@@ -229,6 +231,8 @@ final class BetterPlayer {
         if (notificationChannelName == null) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 int importance = NotificationManager.IMPORTANCE_HIGH;
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                notificationChannelName = DEFAULT_NOTIFICATION_CHANNEL + timestamp.toString();
                 NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL,
                         DEFAULT_NOTIFICATION_CHANNEL, importance);
                 channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL);
