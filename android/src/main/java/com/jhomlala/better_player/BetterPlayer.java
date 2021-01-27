@@ -233,6 +233,7 @@ final class BetterPlayer {
                 int importance = NotificationManager.IMPORTANCE_HIGH;
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                 notificationChannelName = DEFAULT_NOTIFICATION_CHANNEL + timestamp.toString();
+                System.out.println(notificationChannelName);
                 NotificationChannel channel = new NotificationChannel(notificationChannelName,
                 notificationChannelName, importance);
                 channel.setDescription(notificationChannelName);
@@ -280,6 +281,7 @@ final class BetterPlayer {
                         return actionIndices;
                     }};
         playerNotificationManager.setPlayer(exoPlayer);
+        System.out.println("setPlayer for notifications");
         playerNotificationManager.setUseNextAction(false);
         playerNotificationManager.setUsePreviousAction(true);
         playerNotificationManager.setUseStopAction(true);
