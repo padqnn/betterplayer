@@ -233,12 +233,12 @@ final class BetterPlayer {
                 int importance = NotificationManager.IMPORTANCE_HIGH;
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                 notificationChannelName = DEFAULT_NOTIFICATION_CHANNEL + timestamp.toString();
-                NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL,
-                        DEFAULT_NOTIFICATION_CHANNEL, importance);
-                channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL);
+                NotificationChannel channel = new NotificationChannel(notificationChannelName,
+                notificationChannelName, importance);
+                channel.setDescription(notificationChannelName);
                 NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
                 notificationManager.createNotificationChannel(channel);
-                playerNotificationChannelName = DEFAULT_NOTIFICATION_CHANNEL;
+                playerNotificationChannelName = notificationChannelName;
             }
         }
 
