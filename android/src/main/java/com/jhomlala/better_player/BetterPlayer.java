@@ -226,7 +226,12 @@ final class BetterPlayer {
                 return null;
             }
 
-          
+                @Nullable
+                @Override
+                public PendingIntent createCurrentContentIntent(Player player) {
+                    int window = player.getCurrentWindowIndex();
+                    return createPendingIntent(window);
+                }
             };
         String playerNotificationChannelName = notificationChannelName;
         if (notificationChannelName == null) {
