@@ -225,7 +225,15 @@ final class BetterPlayer {
                 }).start();
                 return null;
             }
-        };
+
+            @Override
+            public PendingIntent createCurrentContentIntent(Player player){
+                Intent intent = new Intent(YourService.this,YourMediaActivity.class);
+                PendingIntent contentPendingIntent = PendingIntent.getActivity
+                            (YourService.this, 0, intent, 0);
+                    return contentPendingIntent;
+                }
+            };
         String playerNotificationChannelName = notificationChannelName;
         if (notificationChannelName == null) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
