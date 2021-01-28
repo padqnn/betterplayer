@@ -226,11 +226,7 @@ final class BetterPlayer {
                 return null;
             }
 
-            @Nullable
-            @Override
-            public PendingIntent createCurrentContentIntent(@NonNull Player player){
-                return null;
-                }
+          
             };
         String playerNotificationChannelName = notificationChannelName;
         if (notificationChannelName == null) {
