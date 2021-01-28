@@ -226,12 +226,10 @@ final class BetterPlayer {
                 return null;
             }
 
+            @Nullable
             @Override
-            public PendingIntent createCurrentContentIntent(Player player){
-                Intent intent = new Intent(YourService.this,YourMediaActivity.class);
-                PendingIntent contentPendingIntent = PendingIntent.getActivity
-                            (YourService.this, 0, intent, 0);
-                    return contentPendingIntent;
+            public PendingIntent createCurrentContentIntent(@NonNull Player player){
+                return null;
                 }
             };
         String playerNotificationChannelName = notificationChannelName;
