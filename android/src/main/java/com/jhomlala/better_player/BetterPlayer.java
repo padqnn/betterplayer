@@ -226,14 +226,7 @@ final class BetterPlayer {
                 return null;
             }
 
-            // @Nullable
-            // @Override
-            // public PendingIntent createCurrentContentIntent(@NonNull Player player){
-            //     Intent intent = new Intent(BetterPlayerService.this, MainActivity.class);
-            //     PendingIntent contentPendingIntent = PendingIntent.getActivity
-            //                 (BetterPlayerService.this, 0, intent, 0);
-            //         return contentPendingIntent;
-            //     }
+    
             };
         String playerNotificationChannelName = notificationChannelName;
         if (notificationChannelName == null) {
