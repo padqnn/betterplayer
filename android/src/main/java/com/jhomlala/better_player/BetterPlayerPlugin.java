@@ -370,6 +370,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     }
 
     private void removeOtherNotificationListeners() {
+        currentNotificationTextureId = -1;
         for (int index = 0; index < videoPlayers.size(); index++) {
             videoPlayers.valueAt(index).disposeRemoteNotifications();
         }
