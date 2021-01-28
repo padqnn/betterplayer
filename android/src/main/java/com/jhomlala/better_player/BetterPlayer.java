@@ -226,7 +226,7 @@ final class BetterPlayer {
                 return null;
             }
         };
-
+        System.out.println("setupnotification manager");
         String playerNotificationChannelName = notificationChannelName;
         if (notificationChannelName == null) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
