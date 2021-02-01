@@ -195,11 +195,11 @@ final class BetterPlayer {
                 return null;
             }
 
-            @Nullable
-            @Override
-            public String getCurrentContentText(@NonNull Player player) {
-                return author;
-            }
+            // @Nullable
+            // @Override
+            // public String getCurrentContentText(@NonNull Player player) {
+            //     return author;
+            // }
 
             @Nullable
             @Override
@@ -226,7 +226,15 @@ final class BetterPlayer {
                 return null;
             }
 
-    
+            @Nullable
+            @Override
+            public PendingIntent createCurrentContentIntent(@NonNull Player player){
+                Intent intent = new Intent(this, BetterPlayerService.class)
+                //Intent intent = new Intent(BetterPlayerService.this, MainActivity.class);
+                PendingIntent contentPendingIntent = PendingIntent.getActivity
+                            (BetterPlayerService.this, 0, intent, 0);
+                    return contentPendingIntent;
+                }
             };
         String playerNotificationChannelName = notificationChannelName;
         if (notificationChannelName == null) {
@@ -557,9 +565,10 @@ final class BetterPlayer {
 
                     @Override
                     public void onPlayerError(final ExoPlaybackException error) {
-                        if (eventSink != null) {
-                            eventSink.error("VideoError", "Video player had error " + error, null);
-                        }
+                        System.out.println('onPlayer Error');
+                        // if (eventSink != null) {
+                        //     eventSink.error("VideoError", "Video player had error " + error, null);
+                        // }
                     }
                 });
 
