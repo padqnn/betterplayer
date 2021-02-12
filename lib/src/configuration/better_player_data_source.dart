@@ -1,10 +1,13 @@
 // Project imports:
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
+import 'package:better_player/src/configuration/better_player_video_format.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
 
 import 'better_player_cache_configuration.dart';
 
+///Representation of data source which will be played in Better Player. Allows
+///to setup all necessary configuration connected to video source.
 class BetterPlayerDataSource {
   ///Type of source of video
   final BetterPlayerDataSourceType type;
@@ -26,6 +29,9 @@ class BetterPlayerDataSource {
 
   ///Should player use hls tracks
   final bool useHlsTracks;
+
+  ///Should player use hls audio tracks
+  final bool useHlsAudioTracks;
 
   ///List of strings that represents tracks names.
   ///If empty, then better player will choose name based on track parameters
@@ -49,6 +55,9 @@ class BetterPlayerDataSource {
   ///Duration which will be returned instead of original duration
   final Duration overriddenDuration;
 
+  ///Video format hint when data source url has not valid extension.
+  final BetterPlayerVideoFormat videoFormat;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -58,12 +67,14 @@ class BetterPlayerDataSource {
     this.headers,
     this.useHlsSubtitles = true,
     this.useHlsTracks = true,
+    this.useHlsAudioTracks = true,
     this.hlsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
     this.notificationConfiguration =
         const BetterPlayerNotificationConfiguration(showNotification: false),
     this.overriddenDuration,
+    this.videoFormat,
   }) : assert(
             ((type == BetterPlayerDataSourceType.network ||
                         type == BetterPlayerDataSourceType.file) &&
@@ -81,6 +92,7 @@ class BetterPlayerDataSource {
     Map<String, String> headers,
     bool useHlsSubtitles,
     bool useHlsTracks,
+    bool useHlsAudioTracks,
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
@@ -94,6 +106,7 @@ class BetterPlayerDataSource {
       headers: headers,
       useHlsSubtitles: useHlsSubtitles,
       useHlsTracks: useHlsTracks,
+      useHlsAudioTracks: useHlsAudioTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration,
@@ -155,6 +168,7 @@ class BetterPlayerDataSource {
     Map<String, String> headers,
     bool useHlsSubtitles,
     bool useHlsTracks,
+    bool useHlsAudioTracks,
     Map<String, String> resolutions,
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
@@ -169,6 +183,7 @@ class BetterPlayerDataSource {
       headers: headers ?? this.headers,
       useHlsSubtitles: useHlsSubtitles ?? this.useHlsSubtitles,
       useHlsTracks: useHlsTracks ?? this.useHlsTracks,
+      useHlsAudioTracks: useHlsAudioTracks ?? this.useHlsAudioTracks,
       resolutions: resolutions ?? this.resolutions,
       cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
       notificationConfiguration:

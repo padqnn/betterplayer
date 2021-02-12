@@ -20,8 +20,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.forBiggerBlazesUrl,
-      //overriddenDuration: Duration(seconds: 5),
+      Constants.bugBuckBunnyVideoUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
@@ -48,16 +47,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
             aspectRatio: 16 / 9,
             child: BetterPlayer(controller: _betterPlayerController),
           ),
-          RaisedButton(
-            child: Text("Play network data source"),
-            onPressed: () {
-              BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
-                  Constants.forBiggerBlazesUrl);
-              _betterPlayerController.setupDataSource(dataSource);
-            },
-          ),
-          RaisedButton(
+          ElevatedButton(
             child: Text("Play file data source"),
             onPressed: () async {
               String url = await Utils.getFileUrl(Constants.fileTestVideoUrl);

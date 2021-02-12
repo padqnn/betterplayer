@@ -10,6 +10,7 @@ import 'package:better_player_example/pages/controls_always_visible_page.dart';
 import 'package:better_player_example/pages/controls_configuration_page.dart';
 import 'package:better_player_example/pages/event_listener_page.dart';
 import 'package:better_player_example/pages/fade_placeholder_page.dart';
+import 'package:better_player_example/pages/hls_audio_page.dart';
 import 'package:better_player_example/pages/hls_subtitles_page.dart';
 import 'package:better_player_example/pages/hls_tracks_page.dart';
 import 'package:better_player_example/pages/memory_player_page.dart';
@@ -97,6 +98,9 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget("HLS tracks", () {
         _navigateToPage(HlsTracksPage());
       }),
+      _buildExampleElementWidget("HLS Audio", () {
+        _navigateToPage(HlsAudioPage());
+      }),
       _buildExampleElementWidget("Cache", () {
         _navigateToPage(CachePage());
       }),
@@ -112,40 +116,40 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget("Memory player", () {
         _navigateToPage(MemoryPlayerPage());
       }),
-      _buildExampleElementWidget("Controller controls page", () {
+      _buildExampleElementWidget("Controller controls", () {
         _navigateToPage(ControllerControlsPage());
       }),
-      _buildExampleElementWidget("Auto fullscreen orientation page", () {
+      _buildExampleElementWidget("Auto fullscreen orientation", () {
         _navigateToPage(AutoFullscreenOrientationPage());
       }),
-      _buildExampleElementWidget("Overridden aspect ratio page", () {
+      _buildExampleElementWidget("Overridden aspect ratio", () {
         _navigateToPage(OverriddenAspectRatioPage());
       }),
-      _buildExampleElementWidget("Overridden aspect ratio page", () {
+      _buildExampleElementWidget("Overridden aspect ratio", () {
         _navigateToPage(OverriddenAspectRatioPage());
       }),
-      _buildExampleElementWidget("Notifications player page", () {
+      _buildExampleElementWidget("Notifications player", () {
         _navigateToPage(NotificationPlayerPage());
       }),
-      _buildExampleElementWidget("Reusable video list page", () {
+      _buildExampleElementWidget("Reusable video list", () {
         _navigateToPage(ReusableVideoListPage());
       }),
-      _buildExampleElementWidget("Fade placeholder page", () {
+      _buildExampleElementWidget("Fade placeholder", () {
         _navigateToPage(FadePlaceholderPage());
       }),
-      _buildExampleElementWidget("Placeholder until play page", () {
+      _buildExampleElementWidget("Placeholder until play", () {
         _navigateToPage(PlaceholderUntilPlayPage());
       }),
-      _buildExampleElementWidget("Change player theme page", () {
+      _buildExampleElementWidget("Change player theme", () {
         _navigateToPage(ChangePlayerThemePage());
       }),
-      _buildExampleElementWidget("Overridden duration page", () {
+      _buildExampleElementWidget("Overridden duration", () {
         _navigateToPage(OverriddenDurationPage());
       }),
-      _buildExampleElementWidget("Picture in Picture page", () {
+      _buildExampleElementWidget("Picture in Picture", () {
         _navigateToPage(PictureInPicturePage());
       }),
-      _buildExampleElementWidget("Controls always visible page", () {
+      _buildExampleElementWidget("Controls always visible", () {
         _navigateToPage(ControlsAlwaysVisiblePage());
       }),
     ];

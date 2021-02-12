@@ -1,3 +1,47 @@
+## 0.0.53
+* Fixed fullscreen issue.
+* Fixed HLS tracks selection.
+* Removed HLS parser package and included HLS parser package in Better Player.
+* Removed unused player observer in iOS.
+* Fixed cache issue in Android where multiple Better Player instances uses same directory.
+* Fixed HLS parsing issue.
+* Added HLS Audio examoke,
+
+## 0.0.52
+* Fixed unregister listener issue in iOS.
+* Updated documentation.
+* [BREAKING_CHANGE] BetterPlayerState visibility changed to private.
+* Fixed HLS audio tracks playlist selection issue.
+* Added enableProgressBarDrag in BetterPlayerControlsConfiguration.
+* Fixed audio track picking in ExoPlayer (Android).
+* Changed default loadingColor.
+
+## 0.0.51
+* Fixed lint issues.
+* Fixed subtitles setup issue.
+
+## 0.0.50
+* Fixed deprecated resizeToAvoidBottomPadding
+* Fixed playing large videos in iOS.
+* [BREAKING_CHANGE] Removed autoPlay and errorBuilder from BetterPlayerController. These can be accessed via betterPlayerController.
+* Added HLS Audio track support.
+* Added setAudioTrack method in BetterPlayerController.
+* Added useHlsAudioTrack parameter in BetterPlayerDataSource.
+* Added enableAudioTracks and audioTracksIcon, backgroundColor in BetterPlayerControlsConfiguration.
+* Fixed HLS loading speed.
+* Fixed finished event creation.
+* Fixed player pause issue when player notification is displayed.
+* Fixed player not pausing/resuming automatically correctly.
+
+## 0.0.49
+* Fixed fullscreen dispose issue.
+* Added videoFormat parameter in BetterPlayerDataSource (should be used when data source url has no extension).
+* Added retry feature after video failed to load.
+* Added enableRetry in BetterPlayerControlsConfiguration.
+* Changed BetterPlayerEventType.openFullscreen and BetterPlayerEventType.hideFullscreen events behavior (now events trigger after route change).
+* Removed closed caption support from original video_player codebase.
+* Fixed chinese translation typo (fixed by https://github.com/Big7lion)
+
 ## 0.0.48
 * Fixed loading large videos in iOS.
 * Fixed partly progress bar jumping when seek issue in iOS.

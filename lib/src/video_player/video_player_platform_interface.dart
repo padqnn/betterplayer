@@ -13,8 +13,6 @@ import 'package:flutter/widgets.dart';
 // Package imports:
 import 'package:meta/meta.dart' show required, visibleForTesting;
 
-// Project imports:
-import 'closed_caption_file.dart';
 import 'method_channel_video_player.dart';
 
 /// The interface that implementations of video_player must implement.
@@ -150,6 +148,10 @@ abstract class VideoPlayerPlatform {
         'isPictureInPictureEnabled() has not been implemented.');
   }
 
+  Future<void> setAudioTrack(int textureId, String name, int index) {
+    throw UnimplementedError('setAudio() has not been implemented.');
+  }
+
   /// Returns a widget displaying the video with a given textureID.
   Widget buildView(int textureId) {
     throw UnimplementedError('buildView() has not been implemented.');
@@ -187,15 +189,12 @@ class DataSource {
   /// The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
   ///
-  /// The [closedCaptionFile] argument is optional field to specify a file
-  /// containing the closed captioning.
   DataSource({
     @required this.sourceType,
     this.uri,
     this.formatHint,
     this.asset,
     this.package,
-    this.closedCaptionFile,
     this.headers,
     this.useCache = false,
     this.maxCacheSize = _maxCacheSize,
@@ -250,13 +249,6 @@ class DataSource {
   /// [DataSourceType.asset] videos.
   final String package;
 
-  /// Optional field to specify a file containing the closed
-  /// captioning.
-  ///
-  /// This future will be awaited and the file will be loaded when
-  /// [initialize()] is called.
-  final Future<ClosedCaptionFile> closedCaptionFile;
-
   final Map<String, String> headers;
 
   final bool useCache;
@@ -299,10 +291,10 @@ class DataSource {
   @override
   String toString() {
     return 'DataSource{sourceType: $sourceType, uri: $uri, formatHint:'
-        ' $formatHint, asset: $asset, package: $package, closedCaptionFile: '
-        '$closedCaptionFile, headers: $headers, useCache: $useCache, '
-        'maxCacheSize: $maxCacheSize, maxCacheFileSize: $maxCacheFileSize, '
-        'showNotification: $showNotification, title: $title, author: $author}';
+        ' $formatHint, asset: $asset, package: $package, headers: $headers,'
+        ' useCache: $useCache,maxCacheSize: $maxCacheSize, maxCacheFileSize: '
+        '$maxCacheFileSize, showNotification: $showNotification, title: $title,'
+        ' author: $author}';
   }
 }
 

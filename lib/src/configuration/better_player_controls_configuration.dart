@@ -9,6 +9,8 @@ import 'package:better_player/src/controls/better_player_overflow_menu_item.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+///UI configuration of Better Player. Allows to change colors/icons/behavior
+///of controls. Used in BetterPlayerConfiguration.
 class BetterPlayerControlsConfiguration {
   ///Color of the control bars
   final Color controlBarColor;
@@ -54,6 +56,9 @@ class BetterPlayerControlsConfiguration {
 
   ///Flag used to enable/disable progress bar
   final bool enableProgressBar;
+
+  ///Flag used to enable/disable progress bar drag
+  final bool enableProgressBarDrag;
 
   ///Flag used to enable/disable play-pause
   final bool enablePlayPause;
@@ -111,6 +116,12 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to show/hide PiP mode
   final bool enablePip;
 
+  ///Flag used to enable/disable retry feature
+  final bool enableRetry;
+
+  ///Flag used to show/hide audio tracks
+  final bool enableAudioTracks;
+
   ///Custom items of overflow menu
   final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 
@@ -129,6 +140,9 @@ class BetterPlayerControlsConfiguration {
   ///Icon of the qualities menu item from overflow menu
   final IconData qualitiesIcon;
 
+  ///Icon of the audios menu item from overflow menu
+  final IconData audioTracksIcon;
+
   ///Color of overflow menu icons
   final Color overflowMenuIconsColor;
 
@@ -143,6 +157,9 @@ class BetterPlayerControlsConfiguration {
 
   ///Widget which can be used instead of default progress
   final Widget loadingWidget;
+
+  ///Color of the background, when no frame is displayed.
+  final Color backgroundColor;
 
   const BetterPlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
@@ -160,8 +177,10 @@ class BetterPlayerControlsConfiguration {
     this.enableMute = true,
     this.enableProgressText = false,
     this.enableProgressBar = true,
+    this.enableProgressBarDrag = true,
     this.enablePlayPause = true,
     this.enableSkips = true,
+    this.enableAudioTracks = true,
     this.progressBarPlayedColor = Colors.white,
     this.progressBarHandleColor = Colors.white,
     this.progressBarBufferedColor = Colors.white70,
@@ -178,17 +197,20 @@ class BetterPlayerControlsConfiguration {
     this.enableSubtitles = true,
     this.enableQualities = true,
     this.enablePip = true,
+    this.enableRetry = true,
     this.overflowMenuCustomItems = const [],
     this.overflowMenuIcon = Icons.more_vert,
     this.pipMenuIcon = Icons.picture_in_picture,
     this.playbackSpeedIcon = Icons.shutter_speed,
     this.qualitiesIcon = Icons.hd,
     this.subtitlesIcon = Icons.text_fields,
+    this.audioTracksIcon = Icons.audiotrack,
     this.overflowMenuIconsColor = Colors.black,
     this.forwardSkipTimeInMilliseconds = 15000,
     this.backwardSkipTimeInMilliseconds = 15000,
-    this.loadingColor = Colors.black,
+    this.loadingColor = Colors.white,
     this.loadingWidget,
+    this.backgroundColor = Colors.black,
   });
 
   factory BetterPlayerControlsConfiguration.white() {

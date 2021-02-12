@@ -37,12 +37,17 @@ import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.TrackGroup;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.ui.DefaultTrackNameProvider;
+import com.google.android.exoplayer2.ui.TrackNameProvider;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
@@ -79,6 +84,7 @@ import java.util.Map;
 import com.google.android.exoplayer2.PlaybackParameters;
 
 final class BetterPlayer {
+    private static final String TAG = "BetterPlayer";
     private static final String FORMAT_SS = "ss";
     private static final String FORMAT_DASH = "dash";
     private static final String FORMAT_HLS = "hls";
@@ -690,6 +696,70 @@ final class BetterPlayer {
         event.put("event", eventType);
         eventSink.success(event);
     }
+
+    void setAudioTrack(String name, Integer index) {
+        try {
+            MappingTrackSelector.MappedTrackInfo mappedTrackInfo =
+                    trackSelector.getCurrentMappedTrackInfo();
+
+            if (mappedTrackInfo != null) {
+                for (int rendererIndex = 0; rendererIndex < mappedTrackInfo.getRendererCount();
+                     rendererIndex++) {
+                    if (mappedTrackInfo.getRendererType(rendererIndex) != C.TRACK_TYPE_AUDIO) {
+                        continue;
+                    }
+                    TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(rendererIndex);
+                    boolean hasElementWithoutLabel = false;
+                    for (int groupIndex = 0; groupIndex < trackGroupArray.length; groupIndex++) {
+                        TrackGroup group = trackGroupArray.get(groupIndex);
+                        for (int groupElementIndex = 0; groupElementIndex < group.length; groupElementIndex++) {
+                            String label = group.getFormat(groupElementIndex).label;
+                            if (label == null) {
+                                hasElementWithoutLabel = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    for (int groupIndex = 0; groupIndex < trackGroupArray.length; groupIndex++) {
+                        TrackGroup group = trackGroupArray.get(groupIndex);
+                        for (int groupElementIndex = 0; groupElementIndex < group.length; groupElementIndex++) {
+                            String label = group.getFormat(groupElementIndex).label;
+                            if ( name.equals(label) && index == groupIndex) {
+                                setAudioTrack(rendererIndex, groupIndex, groupElementIndex);
+                                return;
+                            }
+                            ///Fallback option
+                            if (hasElementWithoutLabel && name.equals(label)){
+                                setAudioTrack(rendererIndex, groupIndex, groupElementIndex);
+                                return;
+                            }
+
+                        }
+                    }
+                }
+            }
+        } catch (Exception exception) {
+            Log.e(TAG, "setAudioTrack failed" + exception.toString());
+        }
+    }
+
+    private void setAudioTrack(int rendererIndex, int groupIndex, int groupElementIndex) {
+        MappingTrackSelector.MappedTrackInfo mappedTrackInfo =
+                trackSelector.getCurrentMappedTrackInfo();
+        Log.d(TAG, "Selected audio!");
+        DefaultTrackSelector.ParametersBuilder builder =
+                trackSelector.getParameters().buildUpon();
+        builder.clearSelectionOverrides(rendererIndex)
+                .setRendererDisabled(rendererIndex, false);
+        int[] tracks = {groupElementIndex};
+        DefaultTrackSelector.SelectionOverride override =
+                new DefaultTrackSelector.SelectionOverride(groupIndex, tracks);
+        builder.setSelectionOverride(rendererIndex,
+                mappedTrackInfo.getTrackGroups(rendererIndex), override);
+        trackSelector.setParameters(builder);
+    }
+
 
     void dispose() {
         disposeMediaSession();

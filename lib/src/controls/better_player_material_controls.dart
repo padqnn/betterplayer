@@ -68,7 +68,10 @@ class _BetterPlayerMaterialControlsState
   Widget build(BuildContext context) {
     _wasLoading = isLoading(_latestValue);
     if (_latestValue?.hasError == true) {
-      return _buildErrorWidget();
+      return Container(
+        color: Colors.black,
+        child: _buildErrorWidget(),
+      );
     }
     return MouseRegion(
       onHover: (_) {
@@ -133,10 +136,13 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildErrorWidget() {
-    if (_betterPlayerController.errorBuilder != null) {
-      return _betterPlayerController.errorBuilder(context,
+    final errorBuilder =
+        _betterPlayerController.betterPlayerConfiguration.errorBuilder;
+    if (errorBuilder != null) {
+      return errorBuilder(context,
           _betterPlayerController.videoPlayerController.value.errorDescription);
     } else {
+      final textStyle = TextStyle(color: _controlsConfiguration.textColor);
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -148,8 +154,18 @@ class _BetterPlayerMaterialControlsState
             ),
             Text(
               _betterPlayerController.translations.generalDefaultError,
-              style: TextStyle(color: _controlsConfiguration.textColor),
+              style: textStyle,
             ),
+            if (_controlsConfiguration.enableRetry)
+              TextButton(
+                onPressed: () {
+                  _betterPlayerController.retryDataSource();
+                },
+                child: Text(
+                  _betterPlayerController.translations.generalRetry,
+                  style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                ),
+              )
           ],
         ),
       );
@@ -562,7 +578,7 @@ class _BetterPlayerMaterialControlsState
     _updateState();
 
     if ((_controller.value != null && _controller.value.isPlaying) ||
-        _betterPlayerController.autoPlay) {
+        _betterPlayerController.betterPlayerConfiguration.autoPlay) {
       _startHideTimer();
     }
 

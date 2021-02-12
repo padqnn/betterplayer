@@ -4,22 +4,19 @@ import 'dart:async';
 // Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
+
 // Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+
 // Package imports:
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wakelock/wakelock.dart';
 
 import 'better_player_controller_provider.dart';
 
-typedef BetterPlayerRoutePageBuilder = Widget Function(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    BetterPlayerControllerProvider controllerProvider);
-
+///Widget which uses provided controller to render video player.
 class BetterPlayer extends StatefulWidget {
   const BetterPlayer({Key key, @required this.controller})
       : assert(
@@ -53,17 +50,23 @@ class BetterPlayer extends StatefulWidget {
   final BetterPlayerController controller;
 
   @override
-  BetterPlayerState createState() {
-    return BetterPlayerState();
+  _BetterPlayerState createState() {
+    return _BetterPlayerState();
   }
 }
 
-class BetterPlayerState extends State<BetterPlayer>
+class _BetterPlayerState extends State<BetterPlayer>
     with WidgetsBindingObserver {
   BetterPlayerConfiguration get _betterPlayerConfiguration =>
       widget.controller.betterPlayerConfiguration;
 
   bool _isFullScreen = false;
+
+  ///State of navigator on widget created
+  NavigatorState _navigatorState;
+
+  ///Flag which determines if widget has initialized
+  bool _initialized = false;
 
   @override
   void initState() {
@@ -72,6 +75,18 @@ class BetterPlayerState extends State<BetterPlayer>
     Future.delayed(Duration.zero, () {
       _setup();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (!_initialized) {
+      final navigator = Navigator.of(context);
+      setState(() {
+        _navigatorState = navigator;
+      });
+      _initialized = true;
+    }
+    super.didChangeDependencies();
   }
 
   Future<void> _setup() async {
@@ -88,6 +103,18 @@ class BetterPlayerState extends State<BetterPlayer>
 
   @override
   void dispose() {
+    ///If somehow BetterPlayer widget has been disposed from widget tree and
+    ///full screen is on, then full screen route must be pop and return to normal
+    ///state.
+    if (_isFullScreen) {
+      Wakelock.disable();
+      _navigatorState.maybePop();
+      SystemChrome.setEnabledSystemUIOverlays(
+          _betterPlayerConfiguration.systemOverlaysAfterFullScreen);
+      SystemChrome.setPreferredOrientations(
+          _betterPlayerConfiguration.deviceOrientationsAfterFullScreen);
+    }
+
     WidgetsBinding.instance.removeObserver(this);
     widget.controller.removeListener(onFullScreenChanged);
 
@@ -112,10 +139,14 @@ class BetterPlayerState extends State<BetterPlayer>
     final controller = widget.controller;
     if (controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
+      controller
+          .postEvent(BetterPlayerEvent(BetterPlayerEventType.openFullscreen));
       await _pushFullScreenWidget(context);
     } else if (_isFullScreen && !controller.cancelFullScreenDismiss) {
       Navigator.of(context, rootNavigator: true).pop();
       _isFullScreen = false;
+      controller
+          .postEvent(BetterPlayerEvent(BetterPlayerEventType.hideFullscreen));
     }
 
     if (controller.cancelFullScreenDismiss) {
@@ -136,7 +167,7 @@ class BetterPlayerState extends State<BetterPlayer>
       Animation<double> animation,
       BetterPlayerControllerProvider controllerProvider) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: Container(
         alignment: Alignment.center,
         color: Colors.black,
@@ -252,3 +283,10 @@ class BetterPlayerState extends State<BetterPlayer>
     widget.controller.setAppLifecycleState(state);
   }
 }
+
+///Page route builder used in fullscreen mode.
+typedef BetterPlayerRoutePageBuilder = Widget Function(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    BetterPlayerControllerProvider controllerProvider);

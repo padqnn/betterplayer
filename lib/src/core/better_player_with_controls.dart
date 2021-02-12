@@ -95,7 +95,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     return Center(
       child: Container(
         width: double.infinity,
-        color: Colors.black,
+        color: betterPlayerController
+            .betterPlayerConfiguration.controlsConfiguration.backgroundColor,
         child: AspectRatio(
           aspectRatio: aspectRatio,
           child: _buildPlayerWithControls(betterPlayerController, context),
@@ -160,9 +161,13 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   ) {
     if (controlsConfiguration.showControls) {
       BetterPlayerTheme playerTheme = controlsConfiguration.playerTheme;
-      playerTheme ??= Platform.isAndroid != null
-          ? BetterPlayerTheme.material
-          : BetterPlayerTheme.cupertino;
+      if (playerTheme == null) {
+        if (Platform.isAndroid) {
+          playerTheme = BetterPlayerTheme.material;
+        } else {
+          playerTheme = BetterPlayerTheme.cupertino;
+        }
+      }
 
       if (controlsConfiguration.customControlsBuilder != null &&
           playerTheme == BetterPlayerTheme.custom) {
