@@ -137,12 +137,12 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
           ),
           betterPlayerController.betterPlayerConfiguration.overlay ??
               Container(),
-          BetterPlayerSubtitlesDrawer(
-            betterPlayerController: betterPlayerController,
-            betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
-            subtitles: betterPlayerController.subtitlesLines,
-            playerVisibilityStream: playerVisibilityStreamController.stream,
-          ),
+          // BetterPlayerSubtitlesDrawer(
+          //   betterPlayerController: betterPlayerController,
+          //   betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
+          //   subtitles: betterPlayerController.subtitlesLines,
+          //   playerVisibilityStream: playerVisibilityStreamController.stream,
+          // ),
           if (!placeholderOnTop) _buildPlaceholder(betterPlayerController),
           _buildControls(context, betterPlayerController),
         ],
